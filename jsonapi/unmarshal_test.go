@@ -120,6 +120,19 @@ var _ = Describe("Unmarshal", func() {
 			Expect(err.Error()).To(Equal("error"))
 		})
 
+		It("errors if the type is not present", func() {
+			post := ErrorIDPost{}
+			err := Unmarshal([]byte(`{
+				"data": {
+					"attributes": {
+						"title": "test"
+					}
+				}
+			}`), &post)
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("invalid record, no type was specified"))
+		})
+
 		It("errors on invalid param nil", func() {
 			err := Unmarshal(singlePostJSON, nil)
 			Expect(err).Should(HaveOccurred())
@@ -238,6 +251,20 @@ var _ = Describe("Unmarshal", func() {
 			err := Unmarshal(json, &post)
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(Equal("Cannot unmarshal array to struct target jsonapi.SimplePost"))
+		})
+
+		It("errors if the type is not present", func() {
+			json := []byte(`{
+				"data": [{
+					"attributes": {
+						"title": "something"
+					}
+				}]
+			}`)
+			var posts []SimplePost
+			err := Unmarshal(json, &posts)
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("invalid record, no type was specified"))
 		})
 
 		Context("slice fields", func() {
@@ -570,6 +597,22 @@ var _ = Describe("Unmarshal", func() {
 			err := Unmarshal(postJSON, &posts)
 			Expect(err).To(BeNil())
 			Expect(posts).To(Equal([]Post{{ID: 1, Title: "New Title"}}))
+		})
+
+		It("errors if the type is not present", func() {
+			post := Post{ID: 1, Title: "Old Title"}
+			postJSON := []byte(`{
+				"data": [{
+					"id":   "1",
+					"attributes": {
+						"title": "New Title"
+					}
+				}]
+			}`)
+			posts := []Post{post}
+			err := Unmarshal(postJSON, &posts)
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("invalid record, no type was specified"))
 		})
 	})
 

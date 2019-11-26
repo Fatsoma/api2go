@@ -130,6 +130,16 @@ type Relationship struct {
 	Meta  map[string]interface{}     `json:"meta,omitempty"`
 }
 
+func (r Relationship) MarshalJSON() ([]byte, error) {
+	type Alias Relationship
+
+	if r.Data != nil && r.Data.DataObject != nil && r.Data.DataObject.ID == "" {
+		r.Data.DataObject = nil
+	}
+
+	return json.Marshal(&struct{ Alias }{Alias: (Alias)(r)})
+}
+
 // A RelationshipDataContainer is used to marshal and unmarshal single relationship
 // objects and arrays of relationship objects.
 type RelationshipDataContainer struct {

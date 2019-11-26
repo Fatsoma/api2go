@@ -161,6 +161,41 @@ var _ = Describe("JSONAPI Struct tests", func() {
 		Expect(target.Data.DataArray).To(Equal([]Data{expectedData}))
 	})
 
+	Context("Marshal and Unmarshal data structs", func() {
+		It("nulls out missing relationship objects", func() {
+			data := Data{
+				Type:       "test",
+				ID:         "1",
+				Attributes: json.RawMessage([]byte(`{"foo": "bar"}`)),
+				Relationships: map[string]Relationship{
+					"comments": {
+						Data: &RelationshipDataContainer{
+							DataObject: &RelationshipData{
+								Type: "",
+								ID:   "",
+							},
+						},
+					},
+				},
+			}
+
+			expectedJSON := `{
+				"type": "test",
+				"id": "1",
+				"attributes": {"foo": "bar"},
+				"relationships": {
+					"comments": {
+						"data": null
+					}
+				}
+			}`
+
+			ret, err := json.Marshal(data)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(ret).To(MatchJSON(expectedJSON))
+		})
+	})
+
 	Context("Marshal and Unmarshal link structs", func() {
 		It("marshals to a string with no metadata", func() {
 			link := Link{Href: "test link"}
