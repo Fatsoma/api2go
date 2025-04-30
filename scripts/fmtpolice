@@ -2,7 +2,8 @@
 
 main() {
   check_fmt
-  check_lint
+  check_vet
+  check_staticcheck
 }
 
 check_fmt() {
@@ -13,8 +14,12 @@ check_fmt() {
   eval "set +e"
 }
 
-check_lint() {
-  go vet ./... ; staticcheck ./...
+check_vet() {
+  go vet ./...
+}
+
+check_staticcheck() {
+  staticcheck ./...
 }
 
 main "$@"
