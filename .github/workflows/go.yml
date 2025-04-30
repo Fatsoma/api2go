@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ '1.23', '1.24' ]
+        go: [ '1.24' ]
     name: Go ${{ matrix.go }} tests
     steps:
     - uses: actions/checkout@v2
@@ -31,4 +31,6 @@ jobs:
         ginkgo -tags=gingonic -r --randomizeSuites --failOnPending --trace --race
         ginkgo -tags=echo -r --randomizeSuites --failOnPending --trace --race
         rm examples/examples.coverprofile
+    - name: Run linter
+      run: |
         bash scripts/fmtpolice
