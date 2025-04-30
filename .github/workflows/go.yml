@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ '1.17', '1.15', '1.14', '1.13' ]
+        go: [ '1.21', '1.22', '1.23', '1.24' ]
     name: Go ${{ matrix.go }} tests
     steps:
     - uses: actions/checkout@v2
@@ -23,10 +23,8 @@ jobs:
     - name: Install dependencies
       run: |
         go get -t -d -v ./...
-        go get github.com/onsi/ginkgo/ginkgo
+        go install github.com/onsi/ginkgo/ginkgo
         go get -u golang.org/x/lint/golint
-        go get -u github.com/modocache/gover
-        go get -u github.com/mattn/goveralls
     - name: Run tests
       run: |
         ginkgo -r -cover --randomizeAllSpecs --randomizeSuites --failOnPending --trace --race --progress
@@ -35,6 +33,3 @@ jobs:
         ginkgo -tags=echo -r --randomizeSuites --failOnPending --trace --race
         rm examples/examples.coverprofile
         bash scripts/fmtpolice
-        gover
-        goveralls -coverprofile=gover.coverprofile -repotoken gY90SprlNRGmSMl7MgybLreYa05wUXJTU
-  
