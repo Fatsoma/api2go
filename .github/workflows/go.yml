@@ -1,8 +1,6 @@
 name: Run Tests
 on:
   push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
@@ -12,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ '1.17', '1.15', '1.14', '1.13' ]
+        go: [ '1.24' ]
     name: Go ${{ matrix.go }} tests
     steps:
     - uses: actions/checkout@v2
@@ -23,10 +21,9 @@ jobs:
     - name: Install dependencies
       run: |
         go get -t -d -v ./...
-        go get github.com/onsi/ginkgo/ginkgo
-        go get -u golang.org/x/lint/golint
-        go get -u github.com/modocache/gover
-        go get -u github.com/mattn/goveralls
+        go get -u github.com/onsi/ginkgo/ginkgo
+        go install github.com/onsi/ginkgo/ginkgo
+        go install honnef.co/go/tools/cmd/staticcheck@latest
     - name: Run tests
       run: |
         ginkgo -r -cover --randomizeAllSpecs --randomizeSuites --failOnPending --trace --race --progress
@@ -34,7 +31,6 @@ jobs:
         ginkgo -tags=gingonic -r --randomizeSuites --failOnPending --trace --race
         ginkgo -tags=echo -r --randomizeSuites --failOnPending --trace --race
         rm examples/examples.coverprofile
+    - name: Run linter
+      run: |
         bash scripts/fmtpolice
-        gover
-        goveralls -coverprofile=gover.coverprofile -repotoken gY90SprlNRGmSMl7MgybLreYa05wUXJTU
-  

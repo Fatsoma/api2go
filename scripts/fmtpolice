@@ -1,10 +1,9 @@
 #!/bin/bash
 
-readonly GOPATH="${GOPATH%%:*}"
-
 main() {
   check_fmt
-  check_lint
+  check_vet
+  check_staticcheck
 }
 
 check_fmt() {
@@ -15,16 +14,12 @@ check_fmt() {
   eval "set +e"
 }
 
-check_lint() {
-  for file in $(git ls-files '*.go') ; do
-    if [[ ! "$(${GOPATH}/bin/golint $file)" =~ ^[[:blank:]]*$ ]] ; then
-      _lint_verbose && exit 1
-    fi
-  done
+check_vet() {
+  go vet ./...
 }
 
-_lint_verbose() {
-  for file in $(git ls-files '*.go') ; do $GOPATH/bin/golint $file ; done
+check_staticcheck() {
+  staticcheck ./...
 }
 
 main "$@"
