@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -1101,7 +1101,7 @@ func (res *resource) respondWithPagination(obj Responder, info information, stat
 
 func unmarshalRequest(r *http.Request) ([]byte, error) {
 	defer r.Body.Close()
-	data, err := ioutil.ReadAll(r.Body)
+	data, err := io.ReadAll(r.Body)
 	if err != nil {
 		return nil, err
 	}

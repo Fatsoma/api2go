@@ -185,6 +185,7 @@ var _ = Describe("Unmarshal", func() {
 
 		It("errors with invalid time format", func() {
 			t, err := time.Parse(time.RFC3339, "2014-11-10T16:30:48.823Z")
+			Expect(err).ShouldNot(HaveOccurred())
 			faultyPostMap := []byte(`{
 				"data": {
 					"attributes": {
