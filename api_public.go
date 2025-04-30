@@ -24,12 +24,12 @@ type API struct {
 }
 
 // Handler returns the http.Handler instance for the API.
-func (api API) Handler() http.Handler {
+func (api *API) Handler() http.Handler {
 	return api.router.Handler()
 }
 
 // Router returns the specified router on an api instance
-func (api API) Router() routing.Routeable {
+func (api *API) Router() routing.Routeable {
 	return api.router
 }
 
